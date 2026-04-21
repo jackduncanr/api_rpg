@@ -37,16 +37,14 @@ def simular_batalla(id_jugador1: int, id_jugador2: int):
 
     # 2. Lógica de combate basada en atributos [cite: 13, 43]
     # Calculamos el Poder Total (PT) de cada uno
-    # Fuerza influye en daño, Magia en especiales y Conocimiento en estrategia [cite: 45, 47, 48]
+    # Fuerza influye en daño, Magia en especiales y Conocimiento en estrategia
     def calcular_poder(p):
         poder_base = (p.fuerza * 1.5) + (p.magia * 1.3) + (p.conocimiento * 1.1)
-        # Bonus por Agilidad (Evasión/Velocidad) [cite: 46]
+        # Bonus por Agilidad (Evasión/Velocidad)
         return poder_base + (p.agilidad * 0.5)
-
     poder1 = calcular_poder(p1)
     poder2 = calcular_poder(p2)
-
-    # 3. Determinar ganador [cite: 49]
+    # 3. Determinar ganador
     if poder1 > poder2:
         ganador = p1
         perdedor = p2
@@ -57,8 +55,7 @@ def simular_batalla(id_jugador1: int, id_jugador2: int):
         puntaje_ganador = poder2
     else:
         return {"resultado": "Empate", "detalle": "Ambos guerreros han caído al mismo tiempo."}
-
-    # 4. Retornar resultado con detalles [cite: 50]
+    # 4. Retornar resultado con detalles 
     return {
         "ganador": {
             "nombre": ganador.nombre,
