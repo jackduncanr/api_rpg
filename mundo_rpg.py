@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 
-app = FastAPI(title="RPG Battle API")
+app = FastAPI(title="RPG API")
 
 class Personaje(BaseModel):
     id: Optional[int] = None
