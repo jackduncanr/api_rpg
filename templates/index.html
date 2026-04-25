@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>RPG Arena de Batalla </title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body {
+    background: radial-gradient(circle, #0f172a, #020617);
+    color: white;
+}
+
+.card-rpg {
+    background: #1e293b;
+    border-radius: 15px;
+    padding: 15px;
+    transition: 0.3s;
+}
+
+.card-rpg:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px cyan;
+}
+
+.barra {
+    height: 5px;
+    background: linear-gradient(90deg, lime, yellow, red);
+    border-radius: 10px;
+    transition: width 0.5s;
+}
+
+.arena {
+    border: 2px solid red;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.vs {
+    font-size: 40px;
+    font-weight: bold;
+    color: red;
+}
+
+.animar {
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0% {transform: translateX(0);}
+    25% {transform: translateX(-5px);}
+    50% {transform: translateX(5px);}
+    75% {transform: translateX(-5px);}
+    100% {transform: translateX(0);}
+}
+</style>
+
+</head>
+<body>
+
+<div class="container mt-4">
+
+<h1 class="text-center mb-4">⚔️ RPG ARENA DE BATALLA ⚔️</h1>
+
+<div class="card p-3 bg-dark mb-4">
+    <h4>Crear Guerrero</h4>
+    <div class="row">
+        <input id="nombre" class="form-control col m-1" placeholder="Nombre">
+        <input id="raza" class="form-control col m-1" placeholder="Raza">
+        <input id="clase" class="form-control col m-1" placeholder="Clase">
+    </div>
+
+    <div class="row mt-2">
+        <input id="fuerza" type="number" class="form-control col m-1" placeholder="Fuerza">
+        <input id="agilidad" type="number" class="form-control col m-1" placeholder="Agilidad">
+        <input id="magia" type="number" class="form-control col m-1" placeholder="Magia">
+        <input id="conocimiento" type="number" class="form-control col m-1" placeholder="Conocimiento">
+    </div>
+    <button class="btn btn-success mt-2" onclick="crear()">Crear</button>
+</div>
+
+<div class="row" id="personajes"></div>
+
+<div class="arena mt-4">
+    <h3>⚔️ Arena de Combate ⚔️</h3>
+    <input id="p1" class="form-control mb-2" placeholder="ID Jugador 1">
+    <input id="p2" class="form-control mb-2" placeholder="ID Jugador 2">
+    <button class="btn btn-danger" onclick="batalla()">Iniciar Batalla</button>
+    <div class="vs mt-3">VS</div>
+    <h4 id="resultado" class="mt-3"></h4>
+</div>
+</div>
+
+<script>
+const API = "http://127.0.0.1:8000";
+
+function crear(){
+    fetch(API + "/personajes/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            nombre: nombre.value,
+            color_piel: "N/A",
+            raza: raza.value,
+            clase: clase.value,
+            fuerza: parseInt(fuerza.value),
+            agilidad: parseInt(agilidad.value),
+            magia: parseInt(magia.value),
+            conocimiento: parseInt(conocimiento.value)
+        })
+    }).then(()=>cargar());
+}
+
+function cargar(){
+    fetch(API + "/personajes/")
+    .then(r=>r.json())
+    .then(data=>{
+        let cont = document.getElementById("personajes");
+        cont.innerHTML = "";
+
+        data.forEach(p=>{
+            let poder = p.fuerza + p.agilidad + p.magia + p.conocimiento;
+
+            cont.innerHTML += `
+            <div class="col-md-3">
+                <div class="card-rpg mb-3">
+                    <h5>${p.nombre}</h5>
+                    <p>${p.clase} - ${p.raza}</p>
+
+                    <small>Poder</small>
+                    <div class="barra" style="width:${poder}%"></div>
+
+                    <p class="mt-2">ID: ${p.id}</p>
+                </div>
+            </div>`;
+        });
+    });
+}
+
+function batalla(){
+    let id1 = p1.value;
+    let id2 = p2.value;
+
+    let arena = document.querySelector(".arena");
+    arena.classList.add("animar");
+
+    fetch(API + `/batalla/?id_jugador1=${id1}&id_jugador2=${id2}`, {
+        method: "POST"
+    })
+    .then(r=>r.json())
+    .then(data=>{
+        document.getElementById("resultado").innerText =
+            data.resumen || data.resultado;
+
+        setTimeout(()=>arena.classList.remove("animar"), 500);
+    });
+}
+
+cargar();
+</script>
+
+</body>
+</html>
