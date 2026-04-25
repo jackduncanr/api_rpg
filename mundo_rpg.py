@@ -60,7 +60,7 @@ def simular_batalla(id_jugador1: int, id_jugador2: int):
         "puntaje": round(puntaje, 2)
     }
 
-# 👉 INTERFAZ WEB
+
 @app.get("/")
 def interfaz():
     return FileResponse("templates/index.html")
